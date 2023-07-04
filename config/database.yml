@@ -1,0 +1,51 @@
+# SQLite. Versions 3.8.0 and up are supported.
+#   gem install sqlite3
+#
+#   Ensure the SQLite 3 gem is defined in your Gemfile
+#   gem "sqlite3"
+#
+# default: &default
+#   adapter: sqlite3
+#   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+#   timeout: 5000
+
+# development:
+#   <<: *default
+#   database: db/development.sqlite3
+
+# # Warning: The database defined as "test" will be erased and
+# # re-generated from your development database when you run "rake".
+# # Do not set this db to the same as development or production.
+# test:
+#   <<: *default
+#   database: db/test.sqlite3
+
+# production:
+#   <<: *default
+#   database: db/production.sqlite3
+
+default: &default
+  adapter: mysql2
+  encoding: utf8mb4
+  username: "<%= ENV.fetch('MYSQL_USER', 'root') %>"
+  password: "<%= ENV.fetch('MYSQL_PASS', 'password') %>"
+  host: "<%= ENV.fetch('MYSQL_HOST', '127.0.0.1') %>"
+  verify_connection: true
+  reconnect: true
+  pool: 25
+  variables:
+    max_execution_time: <%= ENV.fetch('MYSQL_MAX_EXECUTION_TIME', 180000) %>
+development:
+  <<: *default
+  database: "<%= ENV.fetch('MYSQL_DB', 'pokedex2') %>"
+#  host: 10.1.10.116
+#  database: petalmd
+#  password: petalmd
+test:
+  <<: *default
+  database: petalmd_test<%= ENV.fetch('TEST_GROUP', ENV['TEST_ENV_NUMBER']) %>
+staging:
+  <<: *default
+  database: "<%= ENV.fetch('MYSQL_DB', 'petalmd_development') %>"
+  # disable advisory_locks when running migration with percona online schema change
+  advisory_locks: "<%= ENV['PERCONA_ONLINE_SCHEMA_CHANGE'] != 'true' %>"
