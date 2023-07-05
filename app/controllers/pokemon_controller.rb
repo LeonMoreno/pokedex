@@ -60,7 +60,7 @@ class PokemonController < ApplicationController
       render json: @poke_json, status: :created
     elsif
       # puts "ENcontradoNEW"
-      render json: {error: "Pokemon exist"}, status: :conflict
+      render json: {error: "Pokemon exist"}, status: 409
     end
     puts "despues IF"
 
