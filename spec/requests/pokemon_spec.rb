@@ -40,18 +40,17 @@ RSpec.describe "Pokemons", type: :request do
     
     it "returns http success" do
       pokemon_params = {
-        pokemon: {
           name: "pk9",
           type_1: "test_1",
           total: 32,
           hp: 42,
           attack: 32, 
           defense: 32
-        }
       }
 
       expect {
-        post "/pokemon", params: pokemon_params
+        # post "/pokemon", params: pokemon_params
+        post "/pokemon", params: { pokemon: pokemon_params }.to_json, headers: { 'Content-Type' => 'application/json' }
       }.to change(Pokemon, :count).by(1)
       # post "/pokemon", params: pokemon_params
       payload = JSON.parse(response.body)
@@ -65,17 +64,16 @@ RSpec.describe "Pokemons", type: :request do
 
     it "should return error message on invalid post" do
       pokemon_params = {
-        pokemon: {
           type_1: "test_1",
           total: 32,
           hp: 42,
           attack: 32, 
           defense: 32
-        }
       }
       # POST HTTP
 
-      post "/pokemon", params: pokemon_params
+      # post "/pokemon", params: pokemon_params
+      post "/pokemon", params: { pokemon: pokemon_params }.to_json, headers: { 'Content-Type' => 'application/json' }
 
       payload = JSON.parse(response.body)
       expect(payload).to_not be_empty
