@@ -15,7 +15,9 @@ class PokemonController < ApplicationController
 
   # GET /pokemon
   def index
-    @pokemon = Pokemon.all
+    # @pokemon = Pokemon.all
+    # @pokemon = Pokemon.paginate(page: params[:page], per_page: 20)
+    @pokemon = Pokemon.paginate(page: params[:page], per_page: 20)
     
     if @pokemon.empty?
       # puts "here empty"
@@ -30,7 +32,10 @@ class PokemonController < ApplicationController
             }
         end
         @res = {
-            count_pokes: @pokeList.length
+            # count_pokes: @pokeList.length
+            count_pokes: @pokeList.length,
+            total_pages: @pokemon.total_pages,
+            current_page: @pokemon.current_page
         }
         @res.merge!(@pokeList)
         render json: @res, status: :ok
