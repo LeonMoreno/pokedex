@@ -5,9 +5,9 @@ class PokemonController < ApplicationController
     https://stackoverflow.com/questions/6083219/activerecord-size-vs-count
 =end
 
-rescue_from Exception do |e|
-  render json: {error: e.message}, status: :internal_error
-end
+  # rescue_from Exception do |e|
+  #   render json: {error: e.message}, status: :internal_error
+  # end
 
   rescue_from ActiveRecord::RecordInvalid do |e|
     render json: {error: e.message}, status: :unprocessable_entity
@@ -48,12 +48,22 @@ end
   #  POST /pokemon
   def create
     # puts "Create esta siendo llamado !!!"
-    @poke = Pokemon.create!(create_params)
-    # if !@poke
-    #   puts "Eror en Params"
-    @poke_json = @poke.slice(:id, :name, :type_1, :type_1, :type_2, :total, :hp, :attack,
-        :defense, :sp_atk, :sp_def, :speed, :generation, :legendary)
-    render json: @poke_json, status: :created
+    parsed_body = JSON.parse(request.body.read)
+    # puts "Buscando ANDO params = #{parsed_body['pokemon']['name']}"
+    poke_find =  Pokemon.find_by(name: parsed_body['pokemon']['name'])
+  
+    if poke_find.nil?
+      # puts "NOOOOO ENcontrado"
+      @poke = Pokemon.create!(create_params)
+      @poke_json = @poke.slice(:id, :name, :type_1, :type_1, :type_2, :total, :hp, :attack,
+          :defense, :sp_atk, :sp_def, :speed, :generation, :legendary)
+      render json: @poke_json, status: :created
+    elsif
+      # puts "ENcontradoNEW"
+      render json: {error: "Pokemon exist"}, status: :conflict
+    end
+    puts "despues IF"
+
   end
 
   # PUT /pokemon/{id} 
