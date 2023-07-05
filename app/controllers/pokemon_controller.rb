@@ -70,7 +70,7 @@ class PokemonController < ApplicationController
       # puts "ENcontradoNEW"
       render json: {error: "Pokemon exist"}, status: 409
     end
-    puts "despues IF"
+    # puts "despues IF"
 
   end
 
