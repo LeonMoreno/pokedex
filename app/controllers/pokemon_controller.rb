@@ -21,25 +21,7 @@ class PokemonController < ApplicationController
       # puts "here empty"
       render json: {}, status: :ok
     else
-        @pokeList = Hash.new
-      # puts "por el ELSE me fui"
-        @pokemon.each do |u|
-            @pokeList[u.name] = {
-                name: u.name,
-                id: u.id
-            }
-        end
-        @res = {
-            all_count_pokes: Pokemon.count,
-            total_pages: @pokemon.total_pages,
-            current_page: @pokemon.current_page
-        }
-        if @pokemon.next_page
-          next_page_url = pokemon_url(page: @pokemon.next_page)
-          @res[:next_page] = next_page_url
-        end
-        @res.merge!(@pokeList)
-        render json: @res, status: :ok
+        render json: PokemonIndexService.res(@pokemon, Pokemon.count), status: :ok
     end
   end
 
