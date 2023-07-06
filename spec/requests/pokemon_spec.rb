@@ -15,7 +15,7 @@ RSpec.describe "Pokemons", type: :request do
     let!(:pokis) { create_list(:pokemon, 10) }
     it "returns http success and all the poke db" do
 
-      puts "SIZE de ALGO #{pokis.size}"
+      # puts "SIZE de ALGO #{pokis.size}"
       get "/pokemon"
       payload = JSON.parse(response.body)
       # puts "Paylod con datos = #{payload}"
@@ -52,7 +52,7 @@ RSpec.describe "Pokemons", type: :request do
         post "/pokemon", params: { pokemon: pokemon_params }.to_json, headers: { 'Content-Type' => 'application/json' }
       }.to change(Pokemon, :count).by(1)
       payload = JSON.parse(response.body)
-      puts "Reponse = #{response.body}"
+      # puts "Reponse = #{response.body}"
       expect(payload["name"]).to eq("pk9")
       expect(payload["type_1"]).to eq("test_1")
       expect(payload).to_not be_empty

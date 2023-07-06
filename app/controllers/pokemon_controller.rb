@@ -47,10 +47,14 @@ class PokemonController < ApplicationController
 
   # GET /pokemon/{id}
   def show
-    @poke = find_pokemon
-    @poke_json = @poke.slice(:id, :name, :type_1, :type_1, :type_2, :total, :hp, :attack,
-                :defense, :sp_atk, :sp_def, :speed, :generation, :legendary)
-            render json: @poke_json, status: :ok
+    @poke = PokemonFindService.find(Pokemon, params[:id])
+    if !@poke.nil?
+      @poke_json = @poke.slice(:id, :name, :type_1, :type_1, :type_2, :total, :hp, :attack,
+                  :defense, :sp_atk, :sp_def, :speed, :generation, :legendary)
+              render json: @poke_json, status: :ok
+    else
+      render json: { error: "Pokemon not found" }, status: :not_found
+    end
   end
 
   #  POST /pokemon
@@ -76,11 +80,15 @@ class PokemonController < ApplicationController
 
   # PUT /pokemon/{id} 
   def update
-    @poke = find_pokemon
-    @poke.update!(update_params)
-    @poke_json = @poke.slice(:id, :name, :type_1, :type_1, :type_2, :total, :hp, :attack,
-        :defense, :sp_atk, :sp_def, :speed, :generation, :legendary)
-    render json: @poke_json, status: :ok
+    @poke = PokemonFindService.find(Pokemon, params[:id])
+    if !@poke.nil?
+      @poke.update!(update_params)
+      @poke_json = @poke.slice(:id, :name, :type_1, :type_1, :type_2, :total, :hp, :attack,
+          :defense, :sp_atk, :sp_def, :speed, :generation, :legendary)
+      render json: @poke_json, status: :ok
+    else 
+      render json: { error: "Pokemon not found" }, status: :not_found
+    end
   end
 
   def create_params
@@ -91,22 +99,4 @@ class PokemonController < ApplicationController
   def update_params
     params.require(:pokemon).permit(:name, :total, :hp, :attack, :defense, :sp_atk, :sp_def, :speed)
   end
-
-  def find_pokemon
-    search_value = params[:id]
-
-    if search_value.to_i != 0
-        @poke = Pokemon.find_by(id: search_value)
-    else
-        # puts search_value.is_a?(String)
-        @poke = Pokemon.find_by(name: search_value)
-    end
-
-    if @poke == nil
-        render json: { error: "Pokemon not found" }, status: :not_found
-    else
-        return @poke  
-    end
-  end
-
 end
