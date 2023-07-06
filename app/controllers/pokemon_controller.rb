@@ -15,7 +15,6 @@ class PokemonController < ApplicationController
 
   # GET /pokemon
   def index
-    @pokemon_all = Pokemon.all
     @pokemon = Pokemon.paginate(page: params[:page], per_page: 20)
     
     if @pokemon.empty?
@@ -31,8 +30,7 @@ class PokemonController < ApplicationController
             }
         end
         @res = {
-            # count_pokes: @pokeList.length
-            all_count_pokes: @pokemon_all.length,
+            all_count_pokes: Pokemon.count,
             total_pages: @pokemon.total_pages,
             current_page: @pokemon.current_page
         }
@@ -59,30 +57,26 @@ class PokemonController < ApplicationController
 
   #  POST /pokemon
   def create
-    # puts "Create esta siendo llamado !!!"
     parsed_body = JSON.parse(request.body.read)
     # puts "Buscando ANDO params = #{parsed_body['pokemon']['name']}"
     poke_find =  Pokemon.find_by(name: parsed_body['pokemon']['name'])
   
     if poke_find.nil?
       # puts "NOOOOO ENcontrado"
-      @poke = Pokemon.create!(create_params)
+      @poke = Pokemon.create!(PokemonParams.create(params))
       @poke_json = @poke.slice(:id, :name, :type_1, :type_1, :type_2, :total, :hp, :attack,
           :defense, :sp_atk, :sp_def, :speed, :generation, :legendary)
       render json: @poke_json, status: :created
     elsif
-      # puts "ENcontradoNEW"
       render json: {error: "Pokemon exist"}, status: 409
     end
-    # puts "despues IF"
-
   end
 
   # PUT /pokemon/{id} 
   def update
     @poke = PokemonFindService.find(Pokemon, params[:id])
     if !@poke.nil?
-      @poke.update!(update_params)
+      @poke.update!(PokemonParams.update(params))
       @poke_json = @poke.slice(:id, :name, :type_1, :type_1, :type_2, :total, :hp, :attack,
           :defense, :sp_atk, :sp_def, :speed, :generation, :legendary)
       render json: @poke_json, status: :ok
@@ -91,12 +85,4 @@ class PokemonController < ApplicationController
     end
   end
 
-  def create_params
-    params.require(:pokemon).permit(:name, :type_1, :total, :hp, :attack,
-         :defense, :sp_atk, :sp_def, :speed, :generation, :legendary)
-  end
-
-  def update_params
-    params.require(:pokemon).permit(:name, :total, :hp, :attack, :defense, :sp_atk, :sp_def, :speed)
-  end
 end
