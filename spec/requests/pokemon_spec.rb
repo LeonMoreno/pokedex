@@ -12,22 +12,23 @@ RSpec.describe "Pokemons", type: :request do
   end
 
   describe "GET /pokemon - With data in the DB" do
+    let!(:pokis) { create_list(:pokemon, 10) }
     it "returns http success and all the poke db" do
-      pokemon1 = Pokemon.create!({name: "pk1", type_1: "pru1", total: 32, attack: 32, defense: 32})
-      pokemon2 = Pokemon.create!({name: "pk2", type_1: "pru1", total: 32, attack: 32, defense: 32})
-      pokemon2 = Pokemon.create!({name: "pk3", type_1: "pru1", total: 32, attack: 32, defense: 32})
+
+      puts "SIZE de ALGO #{pokis.size}"
       get "/pokemon"
       payload = JSON.parse(response.body)
       # puts "Paylod con datos = #{payload}"
-      expect(payload.size).to eq(6)
+      expect(payload.size).to eq(13)
       expect(response).to have_http_status(:success)
     end
   end
 
   describe "GET /pokemon/{id}" do
+    let!(:pokis) { create(:pokemon) }
     it "returns htt success and one poke by id" do
-      pokemon1 = Pokemon.create!({name: "pk1", type_1: "pru1", total: 32, attack: 32, defense: 32})
-      get "/pokemon/#{pokemon1.id}"
+      # pokemon1 = Pokemon.create!({name: "pk1", type_1: "pru1", total: 32, attack: 32, defense: 32})
+      get "/pokemon/#{pokis.id}"
       payload = JSON.parse(response.body)
       # puts "Paylod Un solo POke = #{payload}"
       expect(payload.size).to eq(13)
@@ -36,8 +37,7 @@ RSpec.describe "Pokemons", type: :request do
   end
 
   describe "POST /pokemon" do
-    # let!(:poke) { Pokemon.create({name: "pk17", type_1: "pru1", total: 32, attack: 32, defense: 32}) }
-    
+  
     it "returns http success" do
       pokemon_params = {
           name: "pk9",
@@ -49,12 +49,10 @@ RSpec.describe "Pokemons", type: :request do
       }
 
       expect {
-        # post "/pokemon", params: pokemon_params
         post "/pokemon", params: { pokemon: pokemon_params }.to_json, headers: { 'Content-Type' => 'application/json' }
       }.to change(Pokemon, :count).by(1)
-      # post "/pokemon", params: pokemon_params
       payload = JSON.parse(response.body)
-      # puts "Reponse = #{response.body}"
+      puts "Reponse = #{response.body}"
       expect(payload["name"]).to eq("pk9")
       expect(payload["type_1"]).to eq("test_1")
       expect(payload).to_not be_empty
@@ -83,9 +81,8 @@ RSpec.describe "Pokemons", type: :request do
   end
 
   describe "PUT /pokemon/{id}" do
-  let!(:poke) { Pokemon.create({name: "pk17", type_1: "pru1", total: 32, attack: 32, defense: 32}) }
-
-
+  let!(:pokis) { create(:pokemon) }
+  
     it "Update a post" do
       pokemon_params = {
         pokemon: {
@@ -93,11 +90,11 @@ RSpec.describe "Pokemons", type: :request do
         }
       }
 
-      put "/pokemon/#{poke.id}", params: pokemon_params
+      put "/pokemon/#{pokis.id}", params: pokemon_params
       payload = JSON.parse(response.body)
       # puts payload
       expect(payload).to_not be_empty
-      expect(payload["id"]).to eq(poke.id)
+      expect(payload["id"]).to eq(pokis.id)
       expect(response).to have_http_status(:success)
     end
   end
