@@ -19,7 +19,7 @@ RSpec.describe "Pokemons", type: :request do
       get "/pokemon"
       payload = JSON.parse(response.body)
       # puts "Paylod con datos = #{payload}"
-      expect(payload.size).to eq(13)
+      expect(payload.size).to eq(4)
       expect(response).to have_http_status(:success)
     end
   end

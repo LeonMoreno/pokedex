@@ -19,9 +19,9 @@ class PokemonController < ApplicationController
     
     if @pokemon.empty?
       # puts "here empty"
-      render json: {}, status: :ok
+      render json: {}
     else
-        render json: PokemonIndexService.res(@pokemon, Pokemon.count), status: :ok
+        render json: PokemonIndexService.res(@pokemon, Pokemon.count)
     end
   end
 
@@ -31,7 +31,7 @@ class PokemonController < ApplicationController
     if !@poke.nil?
       @poke_json = @poke.slice(:id, :name, :type_1, :type_1, :type_2, :total, :hp, :attack,
                   :defense, :sp_atk, :sp_def, :speed, :generation, :legendary)
-              render json: @poke_json, status: :ok
+              render json: @poke_json
     else
       render json: { error: "Pokemon not found" }, status: :not_found
     end
@@ -61,7 +61,7 @@ class PokemonController < ApplicationController
       @poke.update!(PokemonParams.update(params))
       @poke_json = @poke.slice(:id, :name, :type_1, :type_1, :type_2, :total, :hp, :attack,
           :defense, :sp_atk, :sp_def, :speed, :generation, :legendary)
-      render json: @poke_json, status: :ok
+      render json: @poke_json
     else 
       render json: { error: "Pokemon not found" }, status: :not_found
     end
