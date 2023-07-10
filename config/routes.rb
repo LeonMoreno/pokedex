@@ -7,10 +7,10 @@ Rails.application.routes.draw do
   get '/health', to: 'health#health'
 
   # By convention --   resources :pokemon
-
-  get '/pokemon', to: 'pokemon#index'
-  get '/pokemon/:id', to: 'pokemon#show'
-  post '/pokemon', to: 'pokemon#create'
-  put '/pokemon/:id', to: 'pokemon#update'
+  resources :pokemon
+  # get '/pokemon', to: 'pokemon#index'
+  # get '/pokemon/:id', to: 'pokemon#show'
+  # post '/pokemon', to: 'pokemon#create'
+  # put '/pokemon/:id', to: 'pokemon#update'
 
 end

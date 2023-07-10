@@ -15,6 +15,9 @@
         #         id: u.id
         #     }
         # end
+
+    problems with url_helpers
+    https://api.rubyonrails.org/v5.1/classes/ActionDispatch/Routing/UrlFor.html
 =end
 
 include Rails.application.routes.url_helpers
@@ -27,10 +30,8 @@ class PokemonIndexService
             total_pages: pokemon.total_pages,
             current_page: pokemon.current_page
         }
-        if pokemon.next_page
-            next_page_url = pokemon_url(page: pokemon.next_page, only_path: true)
-            res[:next_page] = next_page_url
-        end
+        res[:next_page] = url_for(controller: 'pokemon', action: 'index',
+            page: pokemon.next_page, only_path: true) if pokemon.next_page
         res[:list_pokemons] = ActiveModelSerializers::SerializableResource.new(pokemon, each_serializer: PokemonSerializer)
         return res
     end

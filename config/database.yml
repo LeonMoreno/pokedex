@@ -38,14 +38,6 @@ default: &default
 development:
   <<: *default
   database: "<%= ENV.fetch('MYSQL_DB', 'pokedex2') %>"
-#  host: 10.1.10.116
-#  database: petalmd
-#  password: petalmd
 test:
   <<: *default
-  database: petalmd_test<%= ENV.fetch('TEST_GROUP', ENV['TEST_ENV_NUMBER']) %>
-staging:
-  <<: *default
-  database: "<%= ENV.fetch('MYSQL_DB', 'petalmd_development') %>"
-  # disable advisory_locks when running migration with percona online schema change
-  advisory_locks: "<%= ENV['PERCONA_ONLINE_SCHEMA_CHANGE'] != 'true' %>"
+  database: test_pokedex<%= ENV.fetch('TEST_GROUP', ENV['TEST_ENV_NUMBER']) %>

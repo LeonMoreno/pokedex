@@ -1,5 +1,10 @@
 require 'rails_helper'
 
+=begin
+  let vs before
+  https://kolosek.com/rspec-let-vs-before/
+=end
+
 RSpec.describe "Pokemons", type: :request do
   describe "GET /pokemon" do
     it "returns http success" do
@@ -12,7 +17,10 @@ RSpec.describe "Pokemons", type: :request do
   end
 
   describe "GET /pokemon - With data in the DB" do
-    let!(:pokis) { create_list(:pokemon, 10) }
+    #  let!(:pokis) { create_list(:pokemon, 10) }
+     before do
+       pokis = create_list(:pokemon, 10)
+     end
     it "returns http success and all the poke db" do
 
       # puts "SIZE de ALGO #{pokis.size}"
@@ -20,6 +28,25 @@ RSpec.describe "Pokemons", type: :request do
       payload = JSON.parse(response.body)
       # puts "Paylod con datos = #{payload}"
       expect(payload.size).to eq(4)
+      expect(response).to have_http_status(:success)
+    end
+  end
+
+  describe "GET /pokemon - pagination test with 41 pokes" do
+     let!(:pokis) { create_list(:pokemon, 41) }
+    #  before do
+    #    pokis = create_list(:pokemon, 41)
+    #  end
+    it "returns http success and 3 pages" do
+
+      # puts "SIZE de ALGO #{pokis.size} totalPages: "
+      get "/pokemon"
+      payload = JSON.parse(response.body)
+      # puts "Paylod con datos = #{payload}"
+      expect(payload.size).to eq(5)
+      expect(payload["total_pages"]).to eq(3)
+      expect(payload["current_page"]).to eq(1)
+      expect(payload["next_page"]).to eq("/pokemon?page=2")
       expect(response).to have_http_status(:success)
     end
   end
