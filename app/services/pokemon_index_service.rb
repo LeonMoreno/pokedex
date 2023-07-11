@@ -32,7 +32,10 @@ class PokemonIndexService
         }
         res[:next_page] = url_for(controller: 'pokemon', action: 'index',
             page: pokemon.next_page, only_path: true) if pokemon.next_page
-        res[:list_pokemons] = ActiveModelSerializers::SerializableResource.new(pokemon, each_serializer: PokemonSerializer)
+        serializer_options = {}
+        serializer_options[:each_serializer] = PokemonSerializer
+        serializer_options[:only] = true
+        res[:list_pokemons] = ActiveModelSerializers::SerializableResource.new(pokemon, serializer_options)
         return res
     end
 end

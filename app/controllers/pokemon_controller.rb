@@ -15,23 +15,21 @@ class PokemonController < ApplicationController
 
   # GET /pokemon
   def index
-    @pokemon = Pokemon.paginate(page: params[:page], per_page: 20)
+    pokemon = Pokemon.paginate(page: params[:page], per_page: 20)
     
-    if @pokemon.empty?
+    if pokemon.empty?
       # puts "here empty"
       render json: {}
     else
-        render json: PokemonIndexService.res(@pokemon, Pokemon.count)
+        render json: PokemonIndexService.res(pokemon, Pokemon.count)
     end
   end
 
   # GET /pokemon/{id}
   def show
-    @poke = PokemonFindService.find(Pokemon, params[:id])
-    if !@poke.nil?
-      @poke_json = @poke.slice(:id, :name, :type_1, :type_1, :type_2, :total, :hp, :attack,
-                  :defense, :sp_atk, :sp_def, :speed, :generation, :legendary)
-              render json: @poke_json
+    poke = PokemonFindService.find(Pokemon, params[:id])
+    if !poke.nil?
+      render json: poke
     else
       render json: { error: "Pokemon not found" }, status: :not_found
     end
@@ -46,9 +44,7 @@ class PokemonController < ApplicationController
     if poke_find.nil?
       # puts "NOOOOO ENcontrado"
       @poke = Pokemon.create!(PokemonParams.create(params))
-      @poke_json = @poke.slice(:id, :name, :type_1, :type_1, :type_2, :total, :hp, :attack,
-          :defense, :sp_atk, :sp_def, :speed, :generation, :legendary)
-      render json: @poke_json, status: :created
+      render json: @poke
     elsif
       render json: {error: "Pokemon exist"}, status: 409
     end
